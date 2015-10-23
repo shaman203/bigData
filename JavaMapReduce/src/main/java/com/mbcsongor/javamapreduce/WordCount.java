@@ -19,7 +19,6 @@ Run instructions
  - run
     bin/hadoop jar JavaMapReduce/target/JavaMapReduce-1.0-SNAPSHOT.jar 
         com.mcsongor.javamapreduce.Wordcount input/ output/
-
 */
 public class WordCount {
     
