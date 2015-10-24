@@ -1,0 +1,2 @@
+SparkFlight4 start
+	IPYTHON_OPTS="notebook" ../big_data_eszkozok/hazi/sparks/spark-1.5.1-bin-hadoop2.6/bin/pyspark
