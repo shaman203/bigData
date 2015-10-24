@@ -1,4 +1,4 @@
-flights = load '/home/matyi/Egyetem/osz2/big_data_eszkozok/hazi/input/2008.csv' USING PigStorage(',') 
+flights = load '$inputCSV' USING PigStorage(',') 
 AS  (Year:chararray,
 	Month:chararray,
 	DayofMonth:chararray,
@@ -34,4 +34,4 @@ airportLiftoffs = foreach originPorts generate COUNT(completeRecords), group;
 ordered = ORDER airportLiftoffs BY $0 DESC;
 limited = LIMIT ordered 1;
 projected = FOREACH limited GENERATE $1;
-STORE projected into 'pig.out';
+STORE projected into '$output';
