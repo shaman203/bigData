@@ -103,6 +103,8 @@
 \usepackage{fixltx2e}
 \usepackage{epstopdf}
 \usepackage{xcolor}
+\usepackage{pdfpages}
+\usepackage{listings}
 
 
 
@@ -114,7 +116,7 @@
 
 \author{Mátyás-Barta Csongor} % Your name
 
-\institute[BME-MIT] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+\institute[BME] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
 VYW0YR\\
 mbcsongor@yahoo.com \\% Your email address
@@ -129,16 +131,22 @@ mbcsongor@yahoo.com \\% Your email address
 \end{frame}
 
 \begin{frame}
-\frametitle{Választott feladatok és technológiák} 
-\begin{itemize}
-	\item Flight1 - Melyik reptéren gurulnak (TaxiIn és TaxiOut) átlagosan legtöbbet a gépek? \\
-		Java MapReduce
-	\item Flight4 - Melyik 10 légitársaság indul a legtöbbször későn (DepDelay)? \\
-		Spark
-	\item Flight2 - Honnan szállt fel a legtöbb repülő? \\
-		Pig
-\end{itemize}
-
+\frametitle{Választott feladatok és technológiák} 	
+	\begin{itemize}
+		\item Flight1 - Melyik reptéren gurulnak (TaxiIn és TaxiOut) átlagosan legtöbbet a gépek? 
+			\begin{center}
+				\includegraphics[height=1cm]{figures/mapreduce}
+			\end{center}			
+		\item Flight4 - Melyik 10 légitársaság indul a legtöbbször későn (DepDelay)?
+			\begin{center}
+				\includegraphics[height=1cm]{figures/spark}
+			\end{center}	
+		\item Flight2 - Honnan szállt fel a legtöbb repülő? 
+			\begin{center}
+				\includegraphics[height=2cm]{figures/pig}
+			\end{center}	
+	\end{itemize}
+\end{frame}
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
@@ -149,23 +157,34 @@ mbcsongor@yahoo.com \\% Your email address
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Lépések}
-\begin{columns}[t] 
-	\column{.45\textwidth} % Left column and width		
-		
-		
-	\column{.5\textwidth} % Right column and width
-		
-\end{columns}
+\frametitle{Java MapReduce lépések(1): Átlag számítás}
+Melyik reptéren gurulnak (TaxiIn és TaxiOut) átlagosan legtöbbet a gépek?  \\~\\
+Map:\\
+flightrecord $\rightarrow$ (OriginAirport, TaxiOut), (DestAirport, TaxiIn) \\~\\
+Reduce:\\
+ (Airport, list(TaxiTime)) $\rightarrow$ (Airport, Avg(TaxiTime))
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Futtatás}
-
+\frametitle{Java MapReduce lépések(2):Maximum meghatározás}
+Map:\\
+(Airport, AvgTaxiTime)$\rightarrow$ (1, (Airport, AvgTaxiTime)) \\~\\
+Reduce:\\
+(1, list(Airport, AvgTaxiTime)) $\rightarrow$ (MaxAirport, MaxTaxiTime)
 \end{frame}
 
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Java MapReduce futtatás}
+\%input fájlok hozzáadása a hdfs-hez \\
+\lstinline[basicstyle=\ttfamily\color{black}]|bin/hadoop fs -ls input/|   \\~\\
+\%mapreduce job futtatás \\
+\lstinline[basicstyle=\ttfamily\color{black}]|bin/hadoop jar JavaMapReduce-1.0-SNAPSHOT.jar| 
+\lstinline[basicstyle=\ttfamily\color{black}]|com.mbcsongor.javamapreduce.Flight1 input/ output/|
+\end{frame}
 
 %------------------------------------------------
 \section{Flight4 - Spark} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
@@ -173,23 +192,35 @@ mbcsongor@yahoo.com \\% Your email address
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Lépések}
-\begin{columns}[t] 
-	\column{.45\textwidth} % Left column and width		
-		
-		
-	\column{.5\textwidth} % Right column and width
-		
-\end{columns}
+\frametitle{Spark lépések}
+Melyik 10 légitársaság indul a legtöbbször későn (DepDelay)? \\~\\
+\begin{itemize}
+\item Releváns mezők kinyerése: Airport, DepDelay \\
+	\qquad \lstinline[basicstyle=\ttfamily\color{black}]|map(lambda line: (line[16], line[15]))|\\
+\item Időben elinduló gépek szűrése\\
+	\qquad \lstinline[basicstyle=\ttfamily\color{black}]|filter(lambda line: line[1]  0)|\\
+\item Késések előfordulásának összegzése repterek szerint\\
+	\qquad \lstinline[basicstyle=\ttfamily\color{black}]|map(lambda line: (line[0],1)|\\
+	\qquad \lstinline[basicstyle=\ttfamily\color{black}]|reduceByKey(add)|
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Futtatás}
-
+\frametitle{Spark futtatás}
+\includegraphics[scale=0.7,clip,trim=5mm 5mm 10mm 7cm]{figures/SparkFlight4.pdf}
 \end{frame}
 
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Spark megjegyzések}
+\begin{itemize}
+\item Első próba SparkR-ben,  jobb a Python \includegraphics[scale=0.025]{figures/wink}
+\item Spark csak python2-vel megy egyelőre, így a Jupyter-nek(Notebook) szüksége van a python2-es kernelre(ha alapból nem azzal jön, linux disztró függő)
+\end{itemize}
+\end{frame}
 
 %------------------------------------------------
 \section{Flight2 - Pig} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
@@ -197,21 +228,30 @@ mbcsongor@yahoo.com \\% Your email address
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Lépések}
-\begin{columns}[t] 
-	\column{.45\textwidth} % Left column and width		
-		
-		
-	\column{.5\textwidth} % Right column and width
-		
-\end{columns}
+\frametitle{Pig lépések}
+Honnan szállt fel a legtöbb repülő?
+\begin{itemize}
+	\item Nem teljes adatok szűrése
+		\lstinline[basicstyle=\ttfamily\color{black}]|completeRecords = FILTER flights BY ( Origin != 'NA');|
+	\item Repterek listájának előállítása
+		\lstinline[basicstyle=\ttfamily\color{black}]|origin = group completeRecords by Origin;|
+	\item Felszállások számolása repterenként\\
+		\lstinline[basicstyle=\ttfamily\color{black}]|airportLiftoffs = |
+		\lstinline[basicstyle=\ttfamily\color{black}]|foreach origin generate COUNT(completeRecords), group;|
+	\item Rendezés felszállások száma szerint\\
+		\lstinline[basicstyle=\ttfamily\color{black}]|ordered = ORDER airportLiftoffs BY \$0 DESC;|
+	\item Legnagyobb kiválasztása\\
+		\lstinline[basicstyle=\ttfamily\color{black}]|limited = LIMIT ordered 1;|\\
+		\lstinline[basicstyle=\ttfamily\color{black}]|projected = FOREACH limited GENERATE \$1;|
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Futtatás}
-
+\frametitle{Pig futtatás}
+\lstinline[basicstyle=\ttfamily\color{black}]|pig -param inputCSV="input/2008.csv"|
+\lstinline[basicstyle=\ttfamily\color{black}]| -param output="pigResult" -x local Flight2.pig|
 \end{frame}
 
 %------------------------------------------------
