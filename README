@@ -1,5 +1,10 @@
+JavaMapreduceFlight1
+	bin/hadoop fs -ls input/
+	bin/hadoop jar JavaMapReduce-1.0-SNAPSHOT.jar com.mbcsongor.javamapreduce.Flight1 input/ output/
+
 SparkFlight4 start
 	IPYTHON_OPTS="notebook" ../big_data_eszkozok/hazi/sparks/spark-1.5.1-bin-hadoop2.6/bin/pyspark
+
 PigFlight2 start
 	export PATH=/home/matyi/Egyetem/osz2/big_data_eszkozok/hazi/pig/pig-0.15.0/bin:$PATH
 	pig -param inputCSV="/home/matyi/Egyetem/osz2/big_data_eszkozok/hazi/input/2008.csv" -param output="pigResult" -x local Flight2.pig
