@@ -1,3 +1,4 @@
+library(igraph)
 el=read.csv(file.choose()) #read edgelist file (must have header, 3 columns, last called weight)
 g=graph.data.frame(el,directed = FALSE)
 par(mar=c(1,1,1,1)) #plot stupidity rectifier

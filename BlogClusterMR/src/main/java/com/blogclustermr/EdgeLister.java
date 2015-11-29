@@ -62,11 +62,11 @@ public class EdgeLister {
                             
                             if(v1.compareTo(v2) > 0)
                             {
-                                newKey = v1+"+"+v2;
+                                newKey = v1+", "+v2+",";
                             }
                             else
                             {
-                                newKey = v2+"+"+v1;
+                                newKey = v2+", "+v1+",";
                             }
                             edgePair.set(newKey);
                             context.write(edgePair, one);
@@ -90,9 +90,11 @@ public class EdgeLister {
             for (LongWritable val : values) {
                 sum += val.get();
             }
-
-            result.set(sum);
-            context.write(key, result);
+            if(sum > 9)
+            {
+                result.set(sum);
+                context.write(key, result);
+            }
         }
     }
 
@@ -102,6 +104,7 @@ public class EdgeLister {
         job = Job.getInstance(conf, "edge_lister");
         job.setJarByClass(EdgeLister.class);
         job.setMapperClass(EdgeMapper.class);
+        //job.setCombinerClass(EdgeWeightReducer.class);
         job.setReducerClass(EdgeWeightReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(LongWritable.class);
